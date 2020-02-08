@@ -18,12 +18,17 @@ data "aws_iam_policy_document" "trust_policy" {
 resource "aws_iam_role" "this" {
   name               = local.name
   assume_role_policy = data.aws_iam_policy_document.trust_policy.json
+  path               = var.iam_path
 }
 
 resource "aws_iam_role_policy_attachment" "this" {
-  for_each   = toset(["arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore", "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"])
-  role       = aws_iam_role.this.name
+  for_each = toset([
+    "arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore",
+    "arn:aws:iam::aws:policy/CloudWatchAgentServerPolicy"
+  ])
+
   policy_arn = each.key
+  role       = aws_iam_role.this.name
 }
 
 data "aws_iam_policy_document" "kms_key_policy_iam_profile" {
@@ -46,4 +51,5 @@ resource "aws_iam_role_policy" "kms" {
 resource "aws_iam_instance_profile" "this" {
   name = local.name
   role = aws_iam_role.this.name
+  path = var.iam_path
 }

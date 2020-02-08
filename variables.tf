@@ -44,3 +44,9 @@ variable "security_group_ids" {
   description = "The security group ids which can be given to the bastion instance, defaults to empty"
   default     = []
 }
+
+variable "iam_path" {
+  type        = string
+  description = "The IAM path for all IAM resources created by this IaC"
+  default     = "/"
+}
